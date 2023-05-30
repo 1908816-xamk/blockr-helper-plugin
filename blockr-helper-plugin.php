@@ -1,15 +1,14 @@
 <?php
 /*
  * Plugin Name: Blockr Helper Plugin
- * Plugin URI: 
  * description: This tiny helper plugin is meant to use with "Blockr" Vue application by Henri Tikkanen to extend native REST API functionalities on the WordPress side.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Henri Tikkanen
  * Author URI: http://www.henritikkanen.info
  * License: License: GPLv2
  */
 
-if ( ! defined( 'ABSPATH' ) ) { die(); }
+defined( 'ABSPATH' ) or die();
 
 // Add custom category image
 function blockr_include_script() {
@@ -172,7 +171,7 @@ function media_add_likes($data) {
 	$post = get_post($media_id);
 	$old_value = get_post_meta( $media_id, 'likes', true );
 		if ( $old_value ) {
-			$value = $old_value++;
+			$value = $old_value + 1;
 		} else {
 			$value = 1;
 		}
