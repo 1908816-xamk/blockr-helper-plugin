@@ -9,7 +9,7 @@ jQuery(function($){
             multiple: false
         }).on('select', function() {
             var attachment = aw_uploader.state().get('selection').first().toJSON();
-            $('#cat-image').val(attachment.url);
+            $('#cat-image').val(attachment.sizes.thumbnail.url);
         })
         .open();
     });
