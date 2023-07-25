@@ -1,36 +1,37 @@
 <?php
 /*
  * Plugin Name: Blockr Helper Plugin
+ * Plugin URI:
  * description: This tiny helper plugin is meant to use with "Blockr" Vue application by Henri Tikkanen to extend native REST API functionalities on the WordPress side.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Henri Tikkanen
  * Author URI: http://www.henritikkanen.info
  * License: License: GPLv2
  */
 
-defined( 'ABSPATH' ) or die();
+if ( ! defined( 'ABSPATH' ) ) { die(); }
 
 // Add custom category image
 function blockr_include_script() {
-  
-    if ( ! did_action( 'wp_enqueue_media' ) ) {
+
+	if ( ! did_action( 'wp_enqueue_media' ) ) {
         wp_enqueue_media();
-    }
-    wp_enqueue_script( 'blockr-uploader', plugins_url('/js/uploader.js', __FILE__));
+	}
+	wp_enqueue_script( 'blockr-uploader', plugins_url('/js/uploader.js', __FILE__));
 }
 add_action( 'admin_enqueue_scripts', 'blockr_include_script' );
 
 function taxonomy_add_custom_field() {
-    ?>
-    <div class="form-field term-image-wrap">
-        <label for="cat-image"><?php _e( 'Image' ); ?></label>
-        <p><a href="#" class="aw_upload_image_button button button-secondary"><?php _e('Upload Image'); ?></a></p>
-        <input type="text" name="category_image" id="cat-image" value="" size="40" />
-    </div>
-    <?php
+	?>
+	<div class="form-field term-image-wrap">
+	<label for="cat-image"><?php _e( 'Image' ); ?></label>
+	<p><a href="#" class="aw_upload_image_button button button-secondary"><?php _e('Upload Image'); ?></a></p>
+	<input type="text" name="category_image" id="cat-image" value="" size="40" />
+	</div>
+	<?php
 }
 add_action( 'attachment_category_add_form_fields', 'taxonomy_add_custom_field');
- 
+
 function taxonomy_edit_custom_field($taxonomy) {
 
     $image = get_term_meta($taxonomy->term_id, 'category_image', true);
@@ -50,8 +51,8 @@ function save_taxonomy_custom_meta_field( $term_id ) {
     if ( isset( $_POST['category_image'] ) ) {
         update_term_meta($term_id, 'category_image', $_POST['category_image']);
     }
-}  
-add_action( 'edited_attachment_category', 'save_taxonomy_custom_meta_field', 10, 2 );  
+}
+add_action( 'edited_attachment_category', 'save_taxonomy_custom_meta_field', 10, 2 );
 add_action( 'create_attachment_category', 'save_taxonomy_custom_meta_field', 10, 2 );
 
 // Add category image REST API route
@@ -66,7 +67,7 @@ function register_rest_field_for_category_image() {
     );
 }
 add_action( 'rest_api_init', 'register_rest_field_for_category_image' );
-	
+
 function image_update_term_meta_field( $value, $object, $field_name ) {
     if ( ! $value || ! is_string( $value ) ) {
         return;
@@ -88,39 +89,40 @@ add_action( 'init', 'show_taxonomy_in_rest', 11 );
 
 // Search media REST API route
 function register_media_search() {
-	register_rest_route( 'wp/v2', 'media/search', array(
-        	'methods' => WP_REST_SERVER::READABLE,    
+	register_rest_route( 'wp/v2', 'media/search/(?P<term>.+)', array(
+        	'methods' => WP_REST_SERVER::READABLE,
 			'callback' => 'media_search_results'
     ));
 }
 add_action( 'rest_api_init', 'register_media_search' );
 
 function media_search_results($data) {
-	
+
     $query = new WP_Query(array(
 		'post_type' => 'attachment',
-		'posts_per_page' => - 1,
+		'posts_per_page' => $data['per_page'],
 		'post_status'    => 'inherit',
 		'post_mime_type' => 'image',
+		'paged' => $data['page'],
 		's' => sanitize_text_field($data['term'])
 	));
-	
+
 	$image_results = array();
-	
+
 	while( $query->have_posts() ) {
 		$query->the_post();
-		
+
 		$image = array();
 		$id = $query->post->ID;
 
         if ( ! empty( $id ) && $meta = get_post( $id ) ) {
             $image['id']          = $id;
-            $image['url']         = $meta->guid;
-            $image['title']       = $meta->post_title;
+            $image['source_url']  = $meta->guid;
+            $image['title']['rendered'] = $meta->post_title;
             $image['caption']     = $meta->post_excerpt;
             $image['description'] = $meta->post_content;
 
-            if ( $sizes = get_intermediate_image_sizes() ) {   
+            if ( $sizes = get_intermediate_image_sizes() ) {
                 array_unshift( $sizes, 'full' );
 
                 foreach ( $sizes as $size ) {
@@ -142,7 +144,7 @@ function media_search_results($data) {
 
 // Get and post likes REST API route
 function media_likes() {
-	register_rest_route( 'wp/v2', 'media/likes/(?P<id>[\d]+)', 
+	register_rest_route( 'wp/v2', 'media/likes/(?P<id>[\d]+)',
 		array(
 			array(
         	'methods' => 'GET',
@@ -158,15 +160,15 @@ function media_likes() {
 add_action( 'rest_api_init', 'media_likes' );
 
 function media_get_likes($data) {
-	
+
    	$media_id = $data['id'];
 	$value = get_post_meta( $media_id, 'likes', true );
-	
+
 	return $value;
 }
 
 function media_add_likes($data) {
-	
+
    	$media_id = $data['id'];
 	$post = get_post($media_id);
 	$old_value = get_post_meta( $media_id, 'likes', true );
@@ -181,7 +183,7 @@ function media_add_likes($data) {
 
 // Get blockchain status REST API route
 function block_status() {
-	register_rest_route( 'wp/v2', 'media/blockchain/(?P<id>[\d]+)', 
+	register_rest_route( 'wp/v2', 'media/blockchain/(?P<id>[\d]+)',
 		array(
         	'methods' => 'GET',
 			'callback' => 'get_block_status',
