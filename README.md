@@ -1,12 +1,14 @@
 # Blockr Helper Plugin
 
 Plugin Name: Blockr Helper Plugin<br>
-description: This tiny helper plugin is meant to use with "Blockr" Vue application by Henri Tikkanen to extend native REST API functionalities on the WordPress side.<br>
+Description: This tiny helper plugin is meant to use with "Blockr" Vue application by Henri Tikkanen to extend native REST API functionalities on the WordPress side.<br>
 Version: 1.0.2<br>
-Author: Henri Tikkanen<br>
-Author URI: http://www.henritikkanen.info<br>
-License: License: GPLv2<br>
-Tested up to: WordPress 6.2.2<br>
+Requires PHP: 7.4
+Author: Henri Tikkanen
+Author URI: https://github.com/henritik/
+License: License: GPLv2
+Tested up to: WordPress 6.3.1
+<br>
 
 ### Description
 
