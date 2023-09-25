@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Blockr Helper Plugin
  * Plugin URI:
- * description: This tiny helper plugin is meant to use with "Blockr" Vue application by Henri Tikkanen to extend native REST API functionalities on the WordPress side.
+ * Description: This helper plugin is meant to use with Blockr Photo App to extend some the native REST API functions in WordPress.
  * Version: 1.0.2
  * Requires PHP: 7.4
  * Author: Henri Tikkanen
