@@ -3,7 +3,7 @@
  * Plugin Name: Blockr Helper Plugin
  * Plugin URI:
  * Description: This helper plugin is meant to use with Blockr Photo App to extend some the native REST API functions in WordPress.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Requires PHP: 7.4
  * Author: Henri Tikkanen
  * Author URI: https://github.com/henritik/
