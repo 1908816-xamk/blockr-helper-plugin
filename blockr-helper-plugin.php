@@ -99,7 +99,7 @@ function register_media_search() {
 add_action( 'rest_api_init', 'register_media_search' );
 
 function media_search_results($data) {
-
+	
     $query = new WP_Query(array(
 		'post_type' => 'attachment',
 		'posts_per_page' => $data['per_page'],
@@ -108,23 +108,24 @@ function media_search_results($data) {
 		'paged' => $data['page'],
 		's' => sanitize_text_field($data['term'])
 	));
-
+	
 	$image_results = array();
-
+	
 	while( $query->have_posts() ) {
 		$query->the_post();
-
+		
 		$image = array();
 		$id = $query->post->ID;
 
         if ( ! empty( $id ) && $meta = get_post( $id ) ) {
-            $image['id']          = $id;
-            $image['source_url']  = $meta->guid;
-            $image['title']['rendered'] = $meta->post_title;
-            $image['caption']     = $meta->post_excerpt;
-            $image['description'] = $meta->post_content;
+            $image['id']          		= $id;
+            $image['source_url']  		= $meta->guid;
+            $image['title']['rendered'] 	= $meta->post_title;
+            $image['caption']     		= $meta->post_excerpt;
+            $image['description'] 		= $meta->post_content;
+	    $image['attachment_category'] 	= get_the_terms( $id, 'attachment_category' );
 
-            if ( $sizes = get_intermediate_image_sizes() ) {
+            if ( $sizes = get_intermediate_image_sizes() ) {   
                 array_unshift( $sizes, 'full' );
 
                 foreach ( $sizes as $size ) {
