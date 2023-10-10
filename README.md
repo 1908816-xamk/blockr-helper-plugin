@@ -2,7 +2,7 @@
 
 Plugin Name: Blockr Helper Plugin<br>
 Description: This helper plugin is meant to use with Blockr Photo App to extend some the native REST API functions in WordPress<br>
-Version: 1.0.2<br>
+Version: 1.0.3<br>
 Requires PHP: 7.4<br>
 Author: Henri Tikkanen<br>
 Author URI: https://github.com/henritik/<br>
@@ -29,13 +29,16 @@ In order to update the plugin form an earlier version, please do the installatio
 
 ### Changelog
 
-#### 1.0.0
-- Initial release
-
-#### 1.0.1
-- Minor fixes
+#### 1.0.3
+- Attachment taxonomy data added in search results response
 
 #### 1.0.2
 - Changes on Rest route for search media
 - Changed attachment taxonomy images to be medium size thumbnails
 - Some other minor changes
+
+#### 1.0.1
+- Minor fixes
+  
+#### 1.0.0
+- Initial release
