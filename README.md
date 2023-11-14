@@ -2,12 +2,12 @@
 
 Plugin Name: Blockr Helper Plugin<br>
 Description: This helper plugin is meant to use with Blockr Photo App to extend some the native REST API functions in WordPress<br>
-Version: 1.0.3<br>
+Version: 1.0.4<br>
 Requires PHP: 7.4<br>
 Author: Henri Tikkanen<br>
 Author URI: https://github.com/henritik/<br>
 License: License: GPLv2<br>
-Tested up to: WordPress 6.3.1<br>
+Tested up to: WordPress 6.4.1<br>
 <br>
 
 ### Description
@@ -28,6 +28,11 @@ When you want to use OriginStamp timestamping service to proof the originality o
 In order to update the plugin form an earlier version, please do the installation steps 1-2 and allow WordPress to replace existing files.
 
 ### Changelog
+
+#### 1.0.4
+- Added permission callbacks for REST routes
+- Tested with WP 6.4.1
+- Some minor fixes and cleaning
 
 #### 1.0.3
 - Attachment taxonomy data added in search results response
