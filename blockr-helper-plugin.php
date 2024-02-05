@@ -3,7 +3,7 @@
  * Plugin Name: Blockr Helper Plugin
  * Plugin URI:
  * Description: This helper plugin is meant to use with Blockr Photo App to extend some the native REST API functions in WordPress.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Requires PHP: 7.4
  * Author: Henri Tikkanen
  * Author URI: https://github.com/henritik/
@@ -57,19 +57,6 @@ function blockr_save_taxonomy_custom_meta_field( $term_id ) {
 add_action( 'edited_attachment_category', 'blockr_save_taxonomy_custom_meta_field', 10, 2 );
 add_action( 'create_attachment_category', 'blockr_save_taxonomy_custom_meta_field', 10, 2 );
 
-// Add category image REST API route
-function blockr_register_rest_field_for_category_image() {
-	register_rest_field( 'attachment_category',
-		'category_image',
-		array(
-			'get_callback'    => 'blockr_image_get_term_meta_field',
-			'update_callback' => 'blockr_image_update_term_meta_field',
-			'permission_callback' => '__return_true'
-		)
-	);
-}
-add_action( 'rest_api_init', 'blockr_register_rest_field_for_category_image' );
-
 function blockr_image_update_term_meta_field( $value, $object, $field_name ) {
 	if ( ! $value || ! is_string( $value ) ) {
 		return;
@@ -81,20 +68,12 @@ function blockr_image_get_term_meta_field( $object, $field_name, $request ) {
 	return get_term_meta( $object[ 'id' ], $field_name, true );
 }
 
-// Show attachment category in REST API
-function blockr_show_taxonomy_in_rest() {
-	$attachment_category_args = get_taxonomy( 'attachment_category' );
-	$attachment_category_args->show_in_rest = true;
-	register_taxonomy( 'attachment', 'attachment_category', (array) $attachment_category_args );
-}
-add_action( 'init', 'blockr_show_taxonomy_in_rest', 11 );
-
 // Search media REST API route
 function blockr_register_media_search() {
 	register_rest_route( 'wp/v2', 'media/search/(?P<term>.+)', array(
-			'methods' => WP_REST_SERVER::READABLE,
-			'callback' => 'blockr_media_search_results',
-			'permission_callback' => '__return_true'
+			'methods' 				=> WP_REST_SERVER::READABLE,
+			'callback' 				=> 'blockr_media_search_results',
+			'permission_callback' 	=> '__return_true'
 	));
 }
 add_action( 'rest_api_init', 'blockr_register_media_search' );
@@ -102,12 +81,12 @@ add_action( 'rest_api_init', 'blockr_register_media_search' );
 function blockr_media_search_results($data) {
 	
 	$query = new WP_Query(array(
-		'post_type' => 'attachment',
-		'posts_per_page' => $data['per_page'],
-		'post_status'    => 'inherit',
-		'post_mime_type' => 'image',
-		'paged' => $data['page'],
-		's' => sanitize_text_field($data['term'])
+		'post_type' 		=> 'attachment',
+		'posts_per_page' 	=> $data['per_page'],
+		'post_status'    	=> 'inherit',
+		'post_mime_type' 	=> 'image',
+		'paged' 			=> $data['page'],
+		's'					=> sanitize_text_field($data['term'])
 	));
 	
 	$image_results = array();
@@ -119,11 +98,11 @@ function blockr_media_search_results($data) {
 		$id = $query->post->ID;
 
 		if ( ! empty( $id ) && $meta = get_post( $id ) ) {
-			$image['id']          		= $id;
-			$image['source_url']  		= $meta->guid;
+			$image['id']          			= $id;
+			$image['source_url']  			= $meta->guid;
 			$image['title']['rendered'] 	= $meta->post_title;
-			$image['caption']     		= $meta->post_excerpt;
-			$image['description'] 		= $meta->post_content;
+			$image['caption']     			= $meta->post_excerpt;
+			$image['description'] 			= $meta->post_content;
 			$image['attachment_category'] 	= get_the_terms( $id, 'attachment_category' );
 
 			if ( $sizes = get_intermediate_image_sizes() ) {   
@@ -151,14 +130,14 @@ function blockr_media_likes() {
 	register_rest_route( 'wp/v2', 'media/likes/(?P<id>[\d]+)',
 		array(
 			array(
-			'methods' => WP_REST_SERVER::READABLE,
-			'callback' => 'blockr_media_get_likes',
-			'permission_callback' => '__return_true'
+			'methods' 				=> WP_REST_SERVER::READABLE,
+			'callback' 				=> 'blockr_media_get_likes',
+			'permission_callback' 	=> '__return_true'
 			),
 			array(
-			'methods' => WP_REST_Server::CREATABLE,
-			'callback' => 'blockr_media_add_likes',
-			'permission_callback' => '__return_true'
+			'methods' 				=> WP_REST_Server::CREATABLE,
+			'callback' 				=> 'blockr_media_add_likes',
+			'permission_callback' 	=> '__return_true'
 			)
 		)
 	);
@@ -191,9 +170,9 @@ function blockr_media_add_likes($data) {
 function blockr_block_status() {
 	register_rest_route( 'wp/v2', 'media/blockchain/(?P<id>[\d]+)',
 		array(
-			'methods' => 'GET',
-			'callback' => 'blockr_get_block_status',
-			'permission_callback' => '__return_true'
+			'methods' 				=> 'GET',
+			'callback' 				=> 'blockr_get_block_status',
+			'permission_callback' 	=> '__return_true'
 		));
 }
 add_action( 'rest_api_init', 'blockr_block_status' );
