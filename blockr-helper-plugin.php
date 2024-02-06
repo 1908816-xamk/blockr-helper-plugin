@@ -3,7 +3,7 @@
  * Plugin Name: Blockr Helper Plugin
  * Plugin URI:
  * Description: This helper plugin is meant to use with Blockr Photo App to extend some the native REST API functions in WordPress.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Requires PHP: 7.4
  * Author: Henri Tikkanen
  * Author URI: https://github.com/henritik/
@@ -57,12 +57,16 @@ function blockr_save_taxonomy_custom_meta_field( $term_id ) {
 add_action( 'edited_attachment_category', 'blockr_save_taxonomy_custom_meta_field', 10, 2 );
 add_action( 'create_attachment_category', 'blockr_save_taxonomy_custom_meta_field', 10, 2 );
 
-function blockr_image_update_term_meta_field( $value, $object, $field_name ) {
-	if ( ! $value || ! is_string( $value ) ) {
-		return;
-	}
-	return update_term_meta( $object->ID, $field_name, $value );
+// Add category image REST API route
+function blockr_register_rest_field_for_category_image() {
+	register_rest_field( 'attachment_category', 'category_image',
+		array(
+			'get_callback' 			=> 'blockr_image_get_term_meta_field',
+			'permission_callback' 	=> '__return_true'
+		)
+	);
 }
+add_action( 'rest_api_init', 'blockr_register_rest_field_for_category_image' );
 
 function blockr_image_get_term_meta_field( $object, $field_name, $request ) {
 	return get_term_meta( $object[ 'id' ], $field_name, true );
